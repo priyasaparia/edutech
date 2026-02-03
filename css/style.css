@@ -1,0 +1,19 @@
+/* Login Page Background */
+.login-bg {
+  background: linear-gradient(135deg, #0d6efd, #6ea8fe);
+}
+
+/* Login Card */
+.login-card {
+  width: 360px;
+  padding: 25px;
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+/* Input focus effect */
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  border-color: #0d6efd;
+}
