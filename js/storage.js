@@ -37,3 +37,10 @@ function getMessages() {
 function saveMessages(data) {
   localStorage.setItem("messages", JSON.stringify(data));
 }
+function getClassrooms() {
+  return JSON.parse(localStorage.getItem("classrooms")) || [];
+}
+
+function saveClassrooms(data) {
+  localStorage.setItem("classrooms", JSON.stringify(data));
+}

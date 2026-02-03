@@ -125,3 +125,66 @@ function exportMarksCSV() {
   });
   downloadCSV("marks.csv", rows);
 }
+function renderUsers() {
+  const users = getUsers();
+  const list = document.getElementById("userList");
+
+  list.innerHTML = users
+    .filter(u => u.role !== "admin")
+    .map(u => `
+      <div class="border rounded p-3 mb-2 d-flex justify-content-between align-items-center">
+        <div>
+          <b>${u.username}</b>
+          <span class="badge bg-secondary">${u.role}</span><br>
+          <small>Password: <code>${u.password}</code></small>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.username}')">
+          Delete
+        </button>
+      </div>
+    `).join("");
+}
+function deleteUser(username) {
+  if (!confirm("Are you sure you want to delete this user?")) return;
+
+  let users = getUsers();
+  users = users.filter(u => u.username !== username);
+  saveUsers(users);
+
+  alert("User deleted");
+  renderUsers();
+}
+function createClassroom() {
+  const name = document.getElementById("className").value;
+  if (!name) return alert("Enter classroom name");
+
+  const rooms = getClassrooms();
+
+  rooms.push({
+    id: Date.now(),
+    name,
+    students: [],
+    teachers: [],
+    requests: []
+  });
+
+  saveClassrooms(rooms);
+  document.getElementById("className").value = "";
+  renderClassrooms();
+}
+
+function renderClassrooms() {
+  const rooms = getClassrooms();
+  const div = document.getElementById("classroomList");
+
+  div.innerHTML = rooms.map(r => `
+    <div class="border p-3 mb-2">
+      <b>${r.name}</b><br>
+      Teachers: ${r.teachers.length}<br>
+      Students: ${r.students.length}
+    </div>
+  `).join("");
+}
+
+renderClassrooms();
+
