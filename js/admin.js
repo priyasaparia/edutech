@@ -41,10 +41,13 @@ function createUser() {
   const password = generatePassword(role === "teacher" ? "TCH" : "STU");
 
   users.push({
-    username,
-    password,
-    role
-  });
+  username,
+  password,
+  role,
+  forceChangePassword: true,
+  lastLogin: null
+});
+
 
   saveUsers(users);
 

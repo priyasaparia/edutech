@@ -60,30 +60,27 @@ function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!username || !password) {
-    alert("Please enter username and password");
-    return;
-  }
-
   const users = JSON.parse(localStorage.getItem("users")) || [];
-
-  const user = users.find(
-    u => u.username === username && u.password === password
-  );
+  const user = users.find(u => u.username === username && u.password === password);
 
   if (!user) {
-    alert("Invalid username or password");
+    alert("Invalid credentials");
     return;
   }
 
+  // Update last login
+  user.lastLogin = new Date().toLocaleString();
+  localStorage.setItem("users", JSON.stringify(users));
   localStorage.setItem("user", JSON.stringify(user));
 
-  // Redirect by role
-  if (user.role === "admin") {
-    window.location.href = "admin.html";
-  } else if (user.role === "teacher") {
-    window.location.href = "teacher.html";
-  } else {
-    window.location.href = "student.html";
+  // FORCE PASSWORD CHANGE
+  if (user.forceChangePassword) {
+    window.location.href = "change-password.html";
+    return;
   }
+
+  // Role redirect
+  if (user.role === "admin") location.href = "admin.html";
+  else if (user.role === "teacher") location.href = "teacher.html";
+  else location.href = "student.html";
 }
