@@ -35,23 +35,23 @@ function login() {
 (function initAdminOnce() {
   let users = JSON.parse(localStorage.getItem("users"));
 
-  if (!users || !Array.isArray(users)) {
-    users = [];
-  }
+  if (!Array.isArray(users)) users = [];
 
   const adminExists = users.some(u => u.username === "admin");
 
   if (!adminExists) {
     users.push({
       username: "admin",
-      password: "admin123",
-      role: "admin"
+      password: "admin123",     // temporary
+      role: "admin",
+      forceChangePassword: true,
+      lastLogin: null
     });
 
     localStorage.setItem("users", JSON.stringify(users));
-    console.log("Admin account created");
   }
 })();
+
 
 // ===============================
 // LOGIN
