@@ -153,3 +153,19 @@ function renderAnnouncements() {
   `).join("");
 }
 renderAnnouncements();
+function renderInbox() {
+  const box = document.getElementById("inbox");
+  const msgs = getMessages().filter(m => m.to === user.username);
+  if (!msgs.length) {
+    box.innerHTML = "<p class='text-muted'>No messages</p>";
+    return;
+  }
+  box.innerHTML = msgs.map(m=>`
+    <div class="border rounded p-2 mb-2">
+      <b>From:</b> ${m.from}<br>
+      ${m.text}
+      <div class="text-muted small">${m.date}</div>
+    </div>
+  `).join("");
+}
+renderInbox();
