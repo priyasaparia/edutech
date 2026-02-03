@@ -81,3 +81,47 @@ function renderUsers() {
 }
 
 renderUsers();
+function renderAnalytics() {
+  const users = getUsers();
+  const assignments = getAssignments();
+  const attendance = getAttendance();
+
+  document.getElementById("tCount").innerText = users.filter(u=>u.role==="teacher").length;
+  document.getElementById("sCount").innerText = users.filter(u=>u.role==="student").length;
+  document.getElementById("aCount").innerText = assignments.length;
+
+  if (!attendance.length) {
+    document.getElementById("avgAtt").innerText = 0;
+    return;
+  }
+  const present = attendance.filter(a=>a.status==="Present").length;
+  document.getElementById("avgAtt").innerText = Math.round((present/attendance.length)*100);
+}
+renderAnalytics();
+
+/************ CSV EXPORTS ************/
+function downloadCSV(filename, rows) {
+  const csv = rows.map(r => r.join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+function exportAttendanceCSV() {
+  const att = getAttendance();
+  const rows = [["Roll","Date","Status"], ...att.map(a=>[a.roll,a.date,a.status])];
+  downloadCSV("attendance.csv", rows);
+}
+
+function exportMarksCSV() {
+  const asg = getAssignments();
+  const rows = [["Assignment","Student","Marks"]];
+  asg.forEach(a=>{
+    (a.submissions||[]).forEach(s=>{
+      rows.push([a.title, s.student||s.submittedBy, s.marks ?? ""]);
+    });
+  });
+  downloadCSV("marks.csv", rows);
+}

@@ -236,3 +236,32 @@ function submitAttendance() {
  INITIAL LOAD
 **************************/
 renderAssignments();
+function postAnnouncement() {
+  const title = document.getElementById("annTitle").value;
+  const body = document.getElementById("annBody").value;
+  if (!title || !body) return alert("Fill all fields");
+
+  const data = getAnnouncements();
+  data.push({
+    title, body,
+    by: user.username,
+    date: new Date().toLocaleString()
+  });
+  saveAnnouncements(data);
+  alert("Announcement posted");
+}
+function sendMessage() {
+  const to = document.getElementById("msgTo").value;
+  const text = document.getElementById("msgText").value;
+  if (!to || !text) return alert("Fill all fields");
+
+  const msgs = getMessages();
+  msgs.push({
+    from: user.username,
+    to,
+    text,
+    date: new Date().toLocaleString()
+  });
+  saveMessages(msgs);
+  alert("Message sent");
+}

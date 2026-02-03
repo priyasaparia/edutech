@@ -45,7 +45,6 @@
 
 </div>
 
-<!-- ADD ASSIGNMENT MODAL -->
 <!-- CREATE ASSIGNMENT MODAL -->
 <div class="modal fade" id="addModal">
   <div class="modal-dialog modal-lg">
@@ -127,7 +126,18 @@
 
 </div>
 
-
+<h4 class="mt-4">Announcements</h4>
+<div class="card p-3 mb-3">
+  <input id="annTitle" class="form-control mb-2" placeholder="Title">
+  <textarea id="annBody" class="form-control mb-2" placeholder="Message"></textarea>
+  <button class="btn btn-primary" onclick="postAnnouncement()">Post</button>
+</div>
+<h4 class="mt-4">Send Message</h4>
+<div class="card p-3">
+  <input id="msgTo" class="form-control mb-2" placeholder="Student Username">
+  <textarea id="msgText" class="form-control mb-2" placeholder="Message"></textarea>
+  <button class="btn btn-secondary" onclick="sendMessage()">Send</button>
+</div>
 
 <!-- SCRIPTS -->
 <script src="js/storage.js"></script>

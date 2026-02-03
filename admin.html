@@ -56,6 +56,19 @@
   <h4 id="accounts">Generated Accounts</h4>
   <div id="userList"></div>
 
+  <h4 id="progress" class="mt-4">Analytics</h4>
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card p-3">Teachers: <b id="tCount"></b></div></div>
+  <div class="col-md-3"><div class="card p-3">Students: <b id="sCount"></b></div></div>
+  <div class="col-md-3"><div class="card p-3">Assignments: <b id="aCount"></b></div></div>
+  <div class="col-md-3"><div class="card p-3">Avg Attendance: <b id="avgAtt"></b>%</div></div>
+</div>
+
+<h5>Exports</h5>
+<button class="btn btn-outline-primary me-2" onclick="exportAttendanceCSV()">Attendance CSV</button>
+<button class="btn btn-outline-secondary" onclick="exportMarksCSV()">Marks CSV</button>
+
+
   <!-- PROGRESS PLACEHOLDER -->
   <h4 id="progress" class="mt-5">Progress Overview</h4>
   <p class="text-muted">

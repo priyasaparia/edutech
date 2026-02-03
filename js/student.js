@@ -138,3 +138,18 @@ function renderAttendance(records) {
  INITIAL LOAD
 **************************/
 renderAssignments();
+function renderAnnouncements() {
+  const list = document.getElementById("annList");
+  const data = getAnnouncements();
+  if (!data.length) {
+    list.innerHTML = "<p class='text-muted'>No announcements</p>";
+    return;
+  }
+  list.innerHTML = data.map(a=>`
+    <div class="border rounded p-2 mb-2">
+      <b>${a.title}</b><br>${a.body}
+      <div class="text-muted small">${a.by} • ${a.date}</div>
+    </div>
+  `).join("");
+}
+renderAnnouncements();
