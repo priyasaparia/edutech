@@ -1,20 +1,17 @@
-// Get all assignments from LocalStorage
+/********************************
+ ASSIGNMENT STORAGE
+********************************/
 function getAssignments() {
   return JSON.parse(localStorage.getItem("assignments")) || [];
 }
 
-// Save assignments to LocalStorage
 function saveAssignments(assignments) {
   localStorage.setItem("assignments", JSON.stringify(assignments));
 }
-// ===== ATTENDANCE STORAGE =====
-function getAttendance() {
-  return JSON.parse(localStorage.getItem("attendance")) || [];
-}
 
-function saveAttendance(data) {
-  localStorage.setItem("attendance", JSON.stringify(data));
-}
+/********************************
+ ATTENDANCE STORAGE
+********************************/
 function getAttendance() {
   return JSON.parse(localStorage.getItem("attendance")) || [];
 }

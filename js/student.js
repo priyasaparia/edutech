@@ -1,17 +1,22 @@
-// AUTH CHECK
+/*************************
+ AUTH CHECK
+**************************/
 const user = JSON.parse(localStorage.getItem("user"));
-
 if (!user || user.role !== "student") {
   window.location.href = "index.html";
 }
 
-// LOGOUT
+/*************************
+ LOGOUT
+**************************/
 function logout() {
   localStorage.removeItem("user");
   window.location.href = "index.html";
 }
 
-// RENDER ASSIGNMENTS
+/*************************
+ ASSIGNMENTS & SUBMISSIONS
+**************************/
 function renderAssignments() {
   const assignments = getAssignments();
   const list = document.getElementById("assignmentList");
@@ -21,35 +26,22 @@ function renderAssignments() {
   history.innerHTML = "";
 
   assignments.forEach(a => {
-    const alreadySubmitted = a.submissions.some(
-      s => s.submittedBy === user.name && s.role === "student"
-    );
-
-    // Assignment Card
     list.innerHTML += `
       <div class="card mb-3">
         <div class="card-body">
           <h5>${a.title}</h5>
-          <p>Due Date: ${a.dueDate}</p>
-
-          <input type="file" class="form-control mb-2" id="student-file-${a.id}">
-          <button class="btn btn-primary btn-sm"
-            ${alreadySubmitted ? "disabled" : ""}
-            onclick="submitAssignment(${a.id})">
-            ${alreadySubmitted ? "Submitted" : "Submit"}
-          </button>
+          <p><b>Due:</b> ${a.dueDate}</p>
         </div>
       </div>
     `;
 
-    // Submission History
     a.submissions.forEach(s => {
-      if (s.submittedBy === user.name && s.role === "student") {
+      if (s.student === user.username) {
         history.innerHTML += `
-          <div class="border rounded p-2 mb-2">
+          <div class="border p-2 mb-2">
             <b>${a.title}</b><br>
-            File: ${s.fileName}<br>
-            Submitted On: ${s.submittedOn}
+            File: ${s.file}<br>
+            Marks: ${s.marks ?? "Pending"}
           </div>
         `;
       }
@@ -57,63 +49,92 @@ function renderAssignments() {
   });
 }
 
-// STUDENT FILE SUBMIT
-function submitAssignment(id) {
-  const fileInput = document.getElementById(`student-file-${id}`);
-
-  if (!fileInput.files.length) {
-    alert("Please select a file");
+/*************************
+ ATTENDANCE LOGIC
+**************************/
+function filterAttendance() {
+  const roll = document.getElementById("rollNo").value;
+  if (!roll) {
+    alert("Enter roll number");
     return;
   }
 
-  const fileName = fileInput.files[0].name;
-  const assignments = getAssignments();
-  const assignment = assignments.find(a => a.id === id);
+  const from = document.getElementById("fromDate").value;
+  const to = document.getElementById("toDate").value;
 
-  assignment.submissions.push({
-    submittedBy: user.name,
-    role: "student",
-    fileName: fileName,
-    submittedOn: new Date().toLocaleDateString()
-  });
+  const attendance = getAttendance();
+  let records = attendance.filter(a => a.roll == roll);
 
-  saveAssignments(assignments);
-  alert("Assignment submitted successfully!");
-  renderAssignments();
+  if (from) records = records.filter(a => new Date(a.date) >= new Date(from));
+  if (to) records = records.filter(a => new Date(a.date) <= new Date(to));
+
+  renderAttendance(records);
 }
 
-// INITIAL LOAD
-renderAssignments();
-function renderAttendance() {
-  const attendance = getAttendance();
-  const container = document.getElementById("attendanceSection");
+function renderAttendance(records) {
+  const summary = document.getElementById("attendanceSummary");
+  const monthly = document.getElementById("monthlySummary");
 
-  const myAttendance = attendance.filter(
-    a => a.studentName === user.name
-  );
-
-  if (myAttendance.length === 0) {
-    container.innerHTML = "<p class='text-muted'>No attendance records yet</p>";
+  if (records.length === 0) {
+    summary.innerHTML = "<p class='text-muted'>No records found</p>";
+    monthly.innerHTML = "";
     return;
   }
 
-  let presentCount = 0;
+  const present = records.filter(r => r.status === "Present").length;
+  const total = records.length;
+  const percent = Math.round((present / total) * 100);
 
-  container.innerHTML = myAttendance.map(a => {
-    if (a.status === "Present") presentCount++;
-    return `
-      <div class="border rounded p-2 mb-2">
-        Date: ${a.date} <br>
-        Status: <b>${a.status}</b>
+  const warning = percent < 75
+    ? `<span class="badge bg-danger ms-2">⚠ Low Attendance</span>`
+    : "";
+
+  summary.innerHTML = `
+    <p><b>Total Classes:</b> ${total}</p>
+    <p><b>Present:</b> ${present}</p>
+    <p><b>Attendance:</b> ${percent}% ${warning}</p>
+
+    <div class="progress mb-3">
+      <div class="progress-bar ${percent < 75 ? "bg-danger" : "bg-success"}"
+        style="width:${percent}%">
       </div>
-    `;
-  }).join("");
+    </div>
+  `;
 
-  container.innerHTML += `
-    <p class="mt-2"><b>Total Classes:</b> ${myAttendance.length}</p>
-    <p><b>Present:</b> ${presentCount}</p>
+  // Monthly Summary
+  const monthlyData = {};
+
+  records.forEach(r => {
+    const key = new Date(r.date).toLocaleString("default", {
+      month: "long",
+      year: "numeric"
+    });
+
+    if (!monthlyData[key]) {
+      monthlyData[key] = { total: 0, present: 0 };
+    }
+
+    monthlyData[key].total++;
+    if (r.status === "Present") monthlyData[key].present++;
+  });
+
+  monthly.innerHTML = `
+    <h6>Monthly Attendance Summary</h6>
+    ${Object.keys(monthlyData).map(m => {
+      const p = Math.round(
+        (monthlyData[m].present / monthlyData[m].total) * 100
+      );
+      return `
+        <div class="border rounded p-2 mb-2">
+          <b>${m}</b><br>
+          Attendance: ${p}%
+        </div>
+      `;
+    }).join("")}
   `;
 }
 
-// Call this on page load
-renderAttendance();
+/*************************
+ INITIAL LOAD
+**************************/
+renderAssignments();
